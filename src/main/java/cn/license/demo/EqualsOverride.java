@@ -31,21 +31,22 @@ public class EqualsOverride {
         // Person 类的实例作为Map的key
         Map<Person, Object> map = new HashMap<Person, Object>() {
             {
-                put(new Person("张三"), new Object());
+                put(new Person("张三", "10"), new Object());
             }
         };
 
         // Person 类的实例作为List 的元素
         List<Person> list = new ArrayList<Person>() {
             {
-                add(new Person("张三"));
+                add(new Person("张三", "11"));
             }
         };
 
+        list.get(0).setSex("19");
         // 列表中是否包含
-        boolean b1 = list.contains(new Person("张三"));
+        boolean b1 = list.contains(new Person("张三", "11"));
         // Map 中是否包含
-        boolean b2 = map.containsKey(new Person("张三"));
+        boolean b2 = map.containsKey(new Person("张三", "10"));
 
         System.out.println("b1====" + b1 + "\nb2============" + b2);
     }
@@ -56,8 +57,9 @@ public class EqualsOverride {
 
         private String sex;
 
-        public Person(String name) {
+        public Person(String name, String sex) {
             this.name = name;
+            this.sex = sex;
         }
 
         public String getName() {
@@ -82,10 +84,11 @@ public class EqualsOverride {
             // 不要使用 instanceof, 考虑到继承，继承不是同一个类
             if (obj != null && obj.getClass() == this.getClass()) {
                 Person p = (Person) obj;
-                if (p.getName() == null || name == null) {
+                if ((p.getName() == null || name == null)
+                    || (p.getSex() == null || sex == null)) {
                     return false;
                 } else {
-                    return name.equalsIgnoreCase(p.getName());
+                    return name.equals(p.getName()) && sex.equals(p.getSex());
                 }
             }
             return false;
@@ -98,7 +101,7 @@ public class EqualsOverride {
          */
         @Override
         public int hashCode() {
-            return new HashCodeBuilder().append(name).toHashCode();
+            return new HashCodeBuilder().append(name).append(sex).toHashCode();
         }
     }
 }
